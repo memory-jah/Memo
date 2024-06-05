@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        GIT_CREDENTIALS_ID = 'project2' // Replace with your GitHub credentials ID
+        GIT_CREDENTIALS_ID = 'project1' // Replace with your GitHub credentials ID
         DOCKER_REGISTRY_CREDENTIALS_ID = 'dockerhub' // Replace with your Docker Hub credentials ID
         DOCKER_IMAGE = 'memoryjah/exercice:python' // Replace with your Docker image
     }
