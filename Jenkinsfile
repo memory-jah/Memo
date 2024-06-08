@@ -29,11 +29,19 @@ pipeline {
                  }
                  }
 
+        
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${DOCKER_IMAGE}")
-                }
+                    docker.withRegistry('','dockerhub') {
+                        docker_image = docker.build "${IMAGE_NAME}"
+                    }
+                        docker.withRegistry('','dockerhub') {
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
+                      
+                     }
+                 }
             }
         }
 
