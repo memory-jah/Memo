@@ -29,14 +29,6 @@ pipeline {
                  }
                  }
 
-        stage('Pull Docker Image') {
-            steps {
-                script {
-                    sh "docker pull ${DOCKER_IMAGE}"
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
