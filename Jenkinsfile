@@ -15,25 +15,22 @@ pipeline {
             }
         }
            
-        stage('Login in Dockerhub ') {
+        stage('Login to Docker Hub') {
             steps {
                 // Authenticate with Docker Hub
-                withCredentials([usernamePassword(credentialsId: DOCKER_REGISTRY_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
-
-                // Log in to Docker Hub
-                    sh "/usr/local/bin/docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-
-                 }
-                 }
-                 }
+                withCredentials([usernamePassword(credentialsId: DOCKER_REGISTRY_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    // Log in to Docker Hub using --password-stdin for security
+                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                }
+            }
+        }
         
         stage('Pull the private Docker Image') {
             steps {
                 // Pull the private Docker image
-
-                    sh "/usr/local/bin/docker pull ${DOCKER_IMAGE}"
-                }    
-                }
+                sh "docker pull ${DOCKER_IMAGE}"
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
