@@ -1,34 +1,37 @@
 pipeline {
     agent any
-    
+
     environment {
         GIT_CREDENTIALS_ID = 'project1' // Replace with your GitHub credentials ID
         DOCKER_REGISTRY_CREDENTIALS_ID = 'dockerhub' // Replace with your Docker Hub credentials ID
-        DOCKER_IMAGE = 'memoryjah/exercice:python' // Replace with your Docker image
+        DOCKER_IMAGE = 'memoryjah/exercice:python' // Replace with your Docker image details
+        REPOSITORY_URL = 'https://github.com/memory-jah/Memo.git' // Replace with your repository URL
+        BRANCH_NAME = 'main' // Replace with the branch name you want to clone
     }
-    
+
     stages {
         stage('Clone Repository') {
             steps {
                 // Checkout code from GitHub repository
-                git credentialsId: GIT_CREDENTIALS_ID, url: 'https://github.com/memory-jah/Memo.git', branch: 'main'
+                git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${REPOSITORY_URL}", branch: "${BRANCH_NAME}"
             }
         }
-           
+
         stage('Login to Docker Hub') {
             steps {
-                // Authenticate with Docker Hub
-                withCredentials([usernamePassword(credentialsId: DOCKER_REGISTRY_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    // Log in to Docker Hub using --password-stdin for security
-                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                script {
+                    docker.withRegistry('', "${DOCKER_REGISTRY_CREDENTIALS_ID}") {
+                        // Docker login is handled automatically by withRegistry
+                    }
                 }
             }
         }
-        
-        stage('Pull the private Docker Image') {
+
+        stage('Pull Docker Image') {
             steps {
-                // Pull the private Docker image
-                sh "docker pull ${DOCKER_IMAGE}"
+                script {
+                    sh "docker pull ${DOCKER_IMAGE}"
+                }
             }
         }
 
@@ -40,7 +43,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Docker Container') {
+        stage('Run Docker Container') {
             steps {
                 script {
                     // Stop and remove any running container with the same name
@@ -50,9 +53,18 @@ pipeline {
                         docker rm your-container-name
                     fi
                     """
-                    
                     // Run the Docker container
                     sh "docker run -d -p 8000:8000 --name your-container-name ${DOCKER_IMAGE}"
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('', "${DOCKER_REGISTRY_CREDENTIALS_ID}") {
+                        dockerImage.push()
+                    }
                 }
             }
         }
