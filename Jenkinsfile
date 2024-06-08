@@ -11,10 +11,30 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Checkout code from GitHub repository
-                git credentialsId: GIT_CREDENTIALS_ID, url: 'https://github.com/memory-jah/Memo.git', branch: 'main'
+                git credentialsId: GIT_CREDENTIALS_ID, url: 'https://github.com/memory-jah.git', branch: 'main'
             }
         }
+           
+        stage('Login in Dockerhub ') {
+            steps {
+                // Authenticate with Docker Hub
+                withCredentials([usernamePassword(credentialsId: DOCKER_REGISTRY_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
+
+                // Log in to Docker Hub
+                    sh "/usr/local/bin/docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+
+                 }
+                 }
+                 }
         
+        stage('Pull the private Docker Image') {
+            steps {
+                // Pull the private Docker image
+
+                    sh "/usr/local/bin/docker pull ${DOCKER_IMAGE}"
+                }    
+                }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -22,17 +42,7 @@ pipeline {
                 }
             }
         }
-        
-        stage('Login to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('', DOCKER_REGISTRY_CREDENTIALS_ID) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
-        
+
         stage('Deploy Docker Container') {
             steps {
                 script {
