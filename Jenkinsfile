@@ -17,15 +17,17 @@ pipeline {
             }
         }
 
-        stage('Login to Docker Hub') {
+        stage('Login in Dockerhub ') {
             steps {
-                script {
-                    docker.withRegistry('', "${DOCKER_REGISTRY_CREDENTIALS_ID}") {
-                        // Docker login is handled automatically by withRegistry
-                    }
-                }
-            }
-        }
+                // Authenticate with Docker Hub
+                withCredentials([usernamePassword(credentialsId: DOCKER_REGISTRY_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
+
+                // Log in to Docker Hub
+                    sh "/usr/local/bin/docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+
+                 }
+                 }
+                 }
 
         stage('Pull Docker Image') {
             steps {
