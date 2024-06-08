@@ -11,7 +11,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Checkout code from GitHub repository
-                git credentialsId: GIT_CREDENTIALS_ID, url: 'https://github.com/memory-jah.git', branch: 'main'
+                git credentialsId: GIT_CREDENTIALS_ID, url: 'https://github.com/memory-jah/Memo.git', branch: 'main'
             }
         }
            
