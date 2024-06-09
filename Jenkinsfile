@@ -5,7 +5,7 @@ pipeline {
         GIT_CREDENTIALS_ID = 'github-ssh-key' // Replace with your SSH credentials ID for GitHub
         DOCKER_REGISTRY_CREDENTIALS_ID = 'your_docker_registry_credentials' // Replace with your Docker Hub credentials ID
         DOCKER_IMAGE = 'project24' // Replace with your Docker image name
-        REPOSITORY_URL = 'git@github.com:memory-jah/Memo.git' // Replace with your repository URL
+        REPOSITORY_URL = 'https://github.com/memory-jah/Memo.git' // Replace with your repository URL
         BRANCH_NAME = 'main' // Replace with the branch name you want to clone
     }
 
@@ -14,14 +14,6 @@ pipeline {
             steps {
                 // Checkout code from GitHub repository using SSH
                 git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${REPOSITORY_URL}", branch: "${BRANCH_NAME}"
-            }
-        }
-
-        stage('Verify Docker Installation') {
-            steps {
-                // Verify Docker is installed and running
-                sh 'docker --version'
-                sh 'docker info'
             }
         }
 
