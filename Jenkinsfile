@@ -16,16 +16,24 @@ pipeline {
                 git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${REPOSITORY_URL}", branch: "${BRANCH_NAME}"
             }
         }
-
-        stage('Login to Docker Hub') {
+        
+        stage("Build & Push Docker Image") {
             steps {
-                // Authenticate with Docker Hub using secure method
-                withCredentials([usernamePassword(credentialsId: "${DOCKER_REGISTRY_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh 'echo $DOCKER_PASSWORD | /usr/local/bin/docker login -u $DOCKER_USERNAME --password-stdin'
+                script {
+                    docker.withRegistry('','dockerhub') {
+                        docker_image = docker.build "${DOCKER_IMAGE}"
+                    }
+
+                    docker.withRegistry('','dockerhub') {
+                        docker_image.push("${DOCKER_IMAGE}")
+                        docker_image.push('latest')
+                    }
                 }
             }
-        }
 
+       }
+
+        
         stage('Build Docker Image') {
             steps {
                 script {
