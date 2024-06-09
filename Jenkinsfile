@@ -2,46 +2,43 @@ pipeline {
     agent any
 
     environment {
-        GIT_CREDENTIALS_ID = 'project1' // Replace with your GitHub credentials ID
-        DOCKER_REGISTRY_CREDENTIALS_ID = 'dockerhub' // Replace with your Docker Hub credentials ID
-        DOCKER_IMAGE = 'memoryjah/exercice:python' // Replace with your Docker image details
-        REPOSITORY_URL = 'https://github.com/memory-jah/Memo.git' // Replace with your repository URL
+        GIT_CREDENTIALS_ID = 'github-ssh-key' // Replace with your SSH credentials ID for GitHub
+        DOCKER_REGISTRY_CREDENTIALS_ID = 'your_docker_registry_credentials' // Replace with your Docker Hub credentials ID
+        DOCKER_IMAGE = 'project24' // Replace with your Docker image name
+        REPOSITORY_URL = 'git@github.com:memory-jah/Memo.git' // Replace with your repository URL
         BRANCH_NAME = 'main' // Replace with the branch name you want to clone
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                // Checkout code from GitHub repository
+                // Checkout code from GitHub repository using SSH
                 git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${REPOSITORY_URL}", branch: "${BRANCH_NAME}"
             }
         }
 
-        stage('Login in Dockerhub ') {
+        stage('Verify Docker Installation') {
             steps {
-                // Authenticate with Docker Hub
-                withCredentials([usernamePassword(credentialsId: DOCKER_REGISTRY_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
+                // Verify Docker is installed and running
+                sh 'docker --version'
+                sh 'docker info'
+            }
+        }
 
-                // Log in to Docker Hub
-                    sh "/usr/local/bin/docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+        stage('Login to Docker Hub') {
+            steps {
+                // Authenticate with Docker Hub using secure method
+                withCredentials([usernamePassword(credentialsId: "${DOCKER_REGISTRY_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                }
+            }
+        }
 
-                 }
-                 }
-                 }
-
-        
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('','dockerhub') {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
-                        docker.withRegistry('','dockerhub') {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
-                      
-                     }
-                 }
+                    docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                }
             }
         }
 
@@ -49,25 +46,31 @@ pipeline {
             steps {
                 script {
                     // Stop and remove any running container with the same name
-                    sh """
-                    if [ \$(docker ps -q -f name=your-container-name) ]; then
-                        docker stop your-container-name
-                        docker rm your-container-name
+                    sh '''
+                    if [ $(docker ps -q -f name=${DOCKER_IMAGE}_${env.BUILD_NUMBER}) ]; then
+                        docker stop ${DOCKER_IMAGE}_${env.BUILD_NUMBER}
+                        docker rm ${DOCKER_IMAGE}_${env.BUILD_NUMBER}
                     fi
-                    """
+                    '''
                     // Run the Docker container
-                    sh "docker run -d -p 8000:8000 --name your-container-name ${DOCKER_IMAGE}"
+                    docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").run("--name ${DOCKER_IMAGE}_${env.BUILD_NUMBER}")
                 }
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Deploy') {
             steps {
-                script {
-                    docker.withRegistry('', "${DOCKER_REGISTRY_CREDENTIALS_ID}") {
-                        dockerImage.push()
-                    }
-                }
+                // Insert your deployment steps here
+                echo 'Deployment steps go here'
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // Clean up the Docker image
+                docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").remove()
             }
         }
     }
