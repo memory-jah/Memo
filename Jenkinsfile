@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        GIT_CREDENTIALS_ID = 'github-ssh-key' // Replace with your SSH credentials ID for GitHub
-        DOCKER_REGISTRY_CREDENTIALS_ID = 'your_docker_registry_credentials' // Replace with your Docker Hub credentials ID
+        GIT_CREDENTIALS_ID = 'github' // Replace with your SSH credentials ID for GitHub
+        DOCKER_REGISTRY_CREDENTIALS_ID = 'dockerhub' // Replace with your Docker Hub credentials ID
         DOCKER_IMAGE = 'project24' // Replace with your Docker image name
         REPOSITORY_URL = 'https://github.com/memory-jah/Memo.git' // Replace with your repository URL
         BRANCH_NAME = 'main' // Replace with the branch name you want to clone
@@ -62,7 +62,11 @@ pipeline {
         always {
             script {
                 // Clean up the Docker image
-                docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").remove()
+                try {
+                    docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").remove()
+                } catch (Exception e) {
+                    echo "Failed to remove Docker image: ${e}"
+                }
             }
         }
     }
