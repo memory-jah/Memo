@@ -1,16 +1,13 @@
-FROM node AS builder 
+FROM node:14
 
 WORKDIR /app
-
 COPY . /app
 
-RUN npm install
+# Install dependencies
+RUN npm install || (cp /root/.npm/_logs/*.log /app/npm-error.log && exit 1)
 
 # Stage 2: Serve the application with Alpine
-FROM alpine:3.14
-RUN apk add --no-cache nodejs
-COPY --from=builder /app ./
-
-EXPOSE 80
-
-CMD [ "node","server.js"]
+FROM node:14-alpine
+WORKDIR /app
+COPY --from=0 /app /app
+CMD ["npm", "start"]
