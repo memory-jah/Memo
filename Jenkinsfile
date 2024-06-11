@@ -16,22 +16,8 @@ pipeline {
                 git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${REPOSITORY_URL}", branch: "${BRANCH_NAME}"
             }
         }
-        
-        stage("Build & Push Docker Image") {
-            steps {
-                script {
-                    docker.withRegistry('','dockerhub') {
-                        docker_image = docker.build "${DOCKER_IMAGE}"
-                    }
 
-                    docker.withRegistry('','dockerhub') {
-                        docker_image.push("${DOCKER_IMAGE}")
-                        docker_image.push('latest')
-                    }
-                }
-            }
-
-       }
+       
 
         
         stage('Build Docker Image') {
@@ -58,13 +44,18 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+           
+        stage('Build Docker Image') {
             steps {
-                // Insert your deployment steps here
-                echo 'Deployment steps go here'
-            }
-        }
-    }
+                script {
+                     docker.withRegistry('','dockerhub') {
+                        docker_image.push("${DOCKER_IMAGE}")
+                        docker_image.push('latest')
+       
+                    }
+                }
+           }
+
 
     post {
         always {
