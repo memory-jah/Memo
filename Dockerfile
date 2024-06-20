@@ -1,13 +1,20 @@
-FROM node:14
+# Use a base image
+FROM node:latest
 
-WORKDIR /app
-COPY . /app
+# Set the working directory
+WORKDIR /usr/app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
 # Install dependencies
-RUN npm install || (cp /root/.npm/_logs/*.log /app/npm-error.log && exit 1)
+RUN npm install
 
-# Stage 2: Serve the application with Alpine
-FROM node:14-alpine
-WORKDIR /app
-COPY --from=0 /app /app
-CMD ["npm", "start"]
+# Copy the application code
+COPY . .
+
+# Expose port 3000
+EXPOSE 3000
+
+# Command to run the application
+CMD ["node", "app.js"]
