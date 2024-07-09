@@ -33,13 +33,13 @@ pipeline {
                 script {
                     // Stop and remove any running container with the same name
                     sh '''
-                    if [ $(docker ps -q -f name=${DOCKER_IMAGE}_project24-${env.BUILD_NUMBER}) ]; then
-                        docker stop ${DOCKER_IMAGE}_project24-${env.BUILD_NUMBER}
-                        docker rm ${DOCKER_IMAGE}_project24-${env.BUILD_NUMBER}
+                    if [ $(docker ps -q -f name=project24-${env.BUILD_NUMBER}) ]; then
+                        docker stop project24-${env.BUILD_NUMBER}
+                        docker rm project24-${env.BUILD_NUMBER}
                     fi
                     '''
                     // Run the Docker container
-                    docker.image("${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}").run("--name ${DOCKER_IMAGE}_project24-${env.BUILD_NUMBER}")
+                    docker.image("${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}").run("--name project24-${env.BUILD_NUMBER}")
                 }
             }
         }
