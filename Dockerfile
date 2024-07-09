@@ -1,5 +1,5 @@
 # Use a base image
-FROM node:latest
+FROM node:14
 
 # Set the working directory
 WORKDIR /usr/app
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Command to run the application
-CMD ["node", "app.js"]
+CMD ["node", "server.js"]
