@@ -4,7 +4,7 @@ pipeline {
     environment {
         GIT_CREDENTIALS_ID = 'github' // Replace with your SSH credentials ID for GitHub
         DOCKER_REGISTRY_CREDENTIALS_ID = 'dockerhub' // Replace with your Docker Hub credentials ID
-        DOCKER_IMAGE = 'project24' // Replace with your Docker image name
+        DOCKER_IMAGE = 'memoryjah/exercice' // Replace with your Docker image name
         REPOSITORY_URL = 'https://github.com/memory-jah/Memo.git' // Replace with your repository URL
         BRANCH_NAME = 'main' // Replace with the branch name you want to clone
     }
@@ -23,7 +23,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                    docker.build("${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}")
                 }
             }
         }
@@ -33,13 +33,13 @@ pipeline {
                 script {
                     // Stop and remove any running container with the same name
                     sh '''
-                    if [ $(docker ps -q -f name=${DOCKER_IMAGE}_${env.BUILD_NUMBER}) ]; then
-                        docker stop ${DOCKER_IMAGE}_${env.BUILD_NUMBER}
-                        docker rm ${DOCKER_IMAGE}_${env.BUILD_NUMBER}
+                    if [ $(docker ps -q -f name=${DOCKER_IMAGE}_project24-${env.BUILD_NUMBER}) ]; then
+                        docker stop ${DOCKER_IMAGE}_project24-${env.BUILD_NUMBER}
+                        docker rm ${DOCKER_IMAGE}_project24-${env.BUILD_NUMBER}
                     fi
                     '''
                     // Run the Docker container
-                    docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").run("--name ${DOCKER_IMAGE}_${env.BUILD_NUMBER}")
+                    docker.image("${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}").run("--name ${DOCKER_IMAGE}_project24-${env.BUILD_NUMBER}")
                 }
             }
         }
@@ -49,7 +49,7 @@ pipeline {
             steps {
                 script {
                      docker.withRegistry('','dockerhub') {
-                        docker_image.push("${DOCKER_IMAGE}")
+                        docker_image.push("${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}")
                         docker_image.push('latest')
        
                     }
@@ -62,7 +62,8 @@ pipeline {
             script {
                 // Clean up the Docker image
                 try {
-                    docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").remove()
+                    def imageToRemove = docker.image("${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}")
+                    imageToRemove.remove()
                 } catch (Exception e) {
                     echo "Failed to remove Docker image: ${e}"
                 }
