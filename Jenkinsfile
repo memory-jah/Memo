@@ -48,28 +48,18 @@ pipeline {
         stage('docker push Image') {
             steps {
                 script {
-                     docker.withRegistry('','dockerhub') {
-                        docker_image.push("${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}")
-                        docker_image.push('latest')
-       
-                    }
+                     // Login to Docker Hub
+                    sh "echo $DOCKER_REGISTRY_CREDENTIALS_ID | docker login -u ${env.DOCKER_USERNAME} --password-stdin"
+
+                    // Push the Docker image
+                    sh "docker push ${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}"
+                    sh "docker push ${DOCKER_IMAGE}:latest"
+                    
                 }
            }
 
 
-    post {
-        always {
-            script {
-                // Clean up the Docker image
-                try {
-                    def imageToRemove = docker.image("${DOCKER_IMAGE}:project24-${env.BUILD_NUMBER}")
-                    imageToRemove.remove()
-                } catch (Exception e) {
-                    echo "Failed to remove Docker image: ${e}"
-                }
-            }
-        }
-    }
+   
         }
     }
     }
