@@ -49,6 +49,7 @@ pipeline {
                         ls -l AWS
                         rm -rf terraform*
                         wget https://linux-devops-course.s3.amazonaws.com/WEB+SIDE+HTML/covid19.zip
+                        apt install -y unzip
                         unzip -o covid19.zip
                         ls -l covid19
                         sudo rm -rf /var/www/html/*
@@ -60,6 +61,7 @@ pipeline {
                         ls -l
                         ls -la AWS/eip/
                         wget https://linux-devops-course.s3.amazonaws.com/articles.zip
+                        apt install -y unzip
                         unzip -o articles.zip
                         ls -l articles
                         sudo rm -rf /var/www/html/*
@@ -71,6 +73,7 @@ pipeline {
                         ls -lh Azure
                         rm -rf *_linux_amd64.zip
                         wget https://linux-devops-course.s3.amazonaws.com/halloween.zip
+                        apt install -y unzip
                         unzip -o halloween.zip 
                         ls -l
                         sudo rm -rf /var/www/html/*
