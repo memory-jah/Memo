@@ -49,36 +49,42 @@ pipeline {
                         ls -l AWS
                         rm -rf terraform*
                         wget https://linux-devops-course.s3.amazonaws.com/WEB+SIDE+HTML/covid19.zip
+                        ls -l 
+                        '''
                         // apt install -y unzip
                         // unzip -o covid19.zip
                         // ls -l covid19
                         // sudo rm -rf /var/www/html/*
                         // sudo cp -r covid19/* /var/www/html
-                        '''
+                        
                     } 
                     else if (params.APP == 'articles') {
                         sh '''
                         ls -l
                         ls -la AWS/eip/
                         wget https://linux-devops-course.s3.amazonaws.com/articles.zip
+                        ls -l 
+                        '''
                         // apt install -y unzip
                         // unzip -o articles.zip
                         // ls -l articles
                         // sudo rm -rf /var/www/html/*
                         // sudo cp -r articles/* /var/www/html
-                        '''
+                        
                     } 
                     else if (params.APP == 'halloween') {
                         sh '''
                         ls -lh Azure
                         rm -rf *_linux_amd64.zip
-                        wget https://linux-devops-course.s3.amazonaws.com/halloween.zip
+                        wget https://linux-devops-course.s3.amazonaws.com/halloween.zip 
+                        ls -l
+                        '''
                         // apt install -y unzip
                         // unzip -o halloween.zip 
                         // ls -l
                         // sudo rm -rf /var/www/html/*
                         // sudo cp -r halloween/* /var/www/html
-                        '''
+                        
                     } 
                     else {
                         error 'Unknown APP selected'
