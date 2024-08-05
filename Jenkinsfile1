@@ -45,6 +45,7 @@ pipeline {
                 script {
                     if (params.APP == 'covid19') {
                         sh '''
+                        ls -l
                         ls -l ec2/
                         rm -rf terraform*
                         wget https://linux-devops-course.s3.amazonaws.com/WEB+SIDE+HTML/covid19.zip
@@ -56,6 +57,7 @@ pipeline {
                     } 
                     else if (params.APP == 'articles') {
                         sh '''
+                        ls -l
                         ls -la eip/
                         wget https://linux-devops-course.s3.amazonaws.com/articles.zip
                         unzip -o articles.zip
@@ -66,6 +68,7 @@ pipeline {
                     } 
                     else if (params.APP == 'halloween') {
                         sh '''
+                        ls -l
                         ls -lh
                         rm -rf *_linux_amd64.zip
                         wget https://linux-devops-course.s3.amazonaws.com/halloween.zip
