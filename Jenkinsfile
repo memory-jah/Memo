@@ -1,8 +1,7 @@
 pipeline {
     agent {
-        docker {ubuntu}
+        docker {image 'ubuntu'}
     }
-
     environment {
         GIT_CREDENTIALS_ID = 'github' // Replace with your SSH credentials ID for GitHub
         DOCKER_REGISTRY_CREDENTIALS_ID = 'dockerhub' // Replace with your Docker Hub credentials ID
