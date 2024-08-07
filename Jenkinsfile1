@@ -1,5 +1,7 @@
 pipeline {
-    agent any 
+    agent  agent {
+        docker {image 'ubuntu'}
+    }
 
     options {
         timeout(time: 10, unit: 'MINUTES') // Timeout for the entire pipeline
