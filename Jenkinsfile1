@@ -1,5 +1,5 @@
 pipeline {
-    agent  agent {
+    agent {
         docker {image 'ubuntu'}
     }
 
