@@ -35,8 +35,7 @@ pipeline {
         stage('Check Directory Structure') {
             steps {
                 sh 'ls -la'
-                sh 'ls -la terraform'
-                sh 'ls -la terraform/AWS'
+                sh 'ls -la AWS'
             }
         }
 
@@ -68,7 +67,7 @@ pipeline {
                     } 
                     else if (params.APP == 'articles') {
                         sh '''
-                        
+
                         wget https://linux-devops-course.s3.amazonaws.com/articles.zip
                         apt-get install -y unzip
                         unzip -o articles.zip
