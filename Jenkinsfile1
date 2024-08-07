@@ -1,8 +1,9 @@
 pipeline {
     agent {
         docker { 
-            image 'httpd'
-            args '-u root' }
+            image 'httpd' 
+            args '-u root' 
+        }
     }
 
     options {
@@ -31,6 +32,14 @@ pipeline {
             }
         }
 
+        stage('Check Directory Structure') {
+            steps {
+                sh 'ls -la'
+                sh 'ls -la terraform'
+                sh 'ls -la terraform/AWS'
+            }
+        }
+
         stage('Install Apache and Tools') {
             when {
                 expression { return params.INSTALL_APACHE }
@@ -38,6 +47,7 @@ pipeline {
             steps {
                 sh '''
                 apt-get update
+                apt-get install -y apache2 unzip wget
                 '''
             }
         }
@@ -48,30 +58,29 @@ pipeline {
                 script {
                     if (params.APP == 'covid19') {
                         sh '''
-                        ls -la terraform/AWS/ec2
                         wget https://linux-devops-course.s3.amazonaws.com/WEB+SIDE+HTML/covid19.zip
+                        apt-get install -y unzip
                         unzip -o covid19.zip
-                        sudo rm -rf /usr/local/apache2/htdocs*
-                        sudo cp -r covid19/* /usr/local/apache2/htdocs*
-                        rm -rf covide19*
+                        rm -rf /usr/local/apache2/htdocs/*
+                        cp -r covid19/* /usr/local/apache2/htdocs/
                         '''
                     } 
                     else if (params.APP == 'articles') {
                         sh '''
-                        ls -la terraform/AWS/eip/
                         wget https://linux-devops-course.s3.amazonaws.com/articles.zip
+                        apt-get install -y unzip
                         unzip -o articles.zip
-                        sudo rm -rf /usr/local/apache2/htdocs*
-                        sudo cp -r articles/* /usr/local/apache2/htdocs*
+                        rm -rf /usr/local/apache2/htdocs/*
+                        cp -r articles/* /usr/local/apache2/htdocs/
                         '''
                     } 
                     else if (params.APP == 'halloween') {
                         sh '''
-                        ls -lh 
                         wget https://linux-devops-course.s3.amazonaws.com/halloween.zip
+                        apt-get install -y unzip
                         unzip -o halloween.zip
-                        sudo rm -rf /usr/local/apache2/htdocs*
-                        sudo cp -r halloween/* /usr/local/apache2/htdocs*
+                        rm -rf /usr/local/apache2/htdocs/*
+                        cp -r halloween/* /usr/local/apache2/htdocs/
                         '''
                     } 
                     else {
