@@ -47,7 +47,7 @@ pipeline {
             steps {
                 sh '''
                 apt-get update
-                apt-get install -y apache2 unzip wget
+            
                 '''
             }
         }
@@ -58,6 +58,7 @@ pipeline {
                 script {
                     if (params.APP == 'covid19') {
                         sh '''
+                        ls -la terraform/AWS
                         wget https://linux-devops-course.s3.amazonaws.com/WEB+SIDE+HTML/covid19.zip
                         apt-get install -y unzip
                         unzip -o covid19.zip
@@ -67,6 +68,7 @@ pipeline {
                     } 
                     else if (params.APP == 'articles') {
                         sh '''
+                        
                         wget https://linux-devops-course.s3.amazonaws.com/articles.zip
                         apt-get install -y unzip
                         unzip -o articles.zip
