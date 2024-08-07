@@ -48,26 +48,30 @@ pipeline {
                 script {
                     if (params.APP == 'covid19') {
                         sh '''
+                        ls -la terraform/AWS/ec2
                         wget https://linux-devops-course.s3.amazonaws.com/WEB+SIDE+HTML/covid19.zip
                         unzip -o covid19.zip
-                        sudo rm -rf /user/local/apache2/htdocs*
-                        sudo cp -r covid19/* /var/www/html
+                        sudo rm -rf /usr/local/apache2/htdocs*
+                        sudo cp -r covid19/* /usr/local/apache2/htdocs*
+                        rm -rf covide19*
                         '''
                     } 
                     else if (params.APP == 'articles') {
                         sh '''
+                        ls -la terraform/AWS/eip/
                         wget https://linux-devops-course.s3.amazonaws.com/articles.zip
                         unzip -o articles.zip
-                        sudo rm -rf /var/www/html/*
-                        sudo cp -r articles/* /var/www/html
+                        sudo rm -rf /usr/local/apache2/htdocs*
+                        sudo cp -r articles/* /usr/local/apache2/htdocs*
                         '''
                     } 
                     else if (params.APP == 'halloween') {
                         sh '''
+                        ls -lh 
                         wget https://linux-devops-course.s3.amazonaws.com/halloween.zip
                         unzip -o halloween.zip
-                        sudo rm -rf /var/www/html/*
-                        sudo cp -r halloween/* /var/www/html
+                        sudo rm -rf /usr/local/apache2/htdocs*
+                        sudo cp -r halloween/* /usr/local/apache2/htdocs*
                         '''
                     } 
                     else {
