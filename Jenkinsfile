@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker {ubuntu}
+    }
 
     environment {
         GIT_CREDENTIALS_ID = 'github' // Replace with your SSH credentials ID for GitHub
